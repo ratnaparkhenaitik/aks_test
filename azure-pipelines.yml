@@ -12,7 +12,7 @@ variables:
   tag: '$(Build.BuildId)'
   registryname: 'myazuredevops2021.azurecr.io'
   dockerfilepath: '$(Build.SourcesDirectory)/Dockerfile'
-  imagerepo: app1/app1nginx
+  imagerepo: 'app1/app1nginx'
 stages:
 - stage: Build
   displayName: Build image and Push Image into ACR
