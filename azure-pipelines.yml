@@ -1,0 +1,33 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+  registryname: 'myazuredevops2021.azurecr.io'
+  dockerfilepath: '$(Build.SourcesDirectory)/Dockerfile'
+  imagerepo: app1/app1nginx
+stages:
+- stage: Build
+  displayName: Build image and Push Image into ACR
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+     - task: Docker@2
+       displayName: Build and push image into container registry
+       inputs:
+        command: 'buildAndPush'
+        Dockerfile: '$(dockerfilepath)'
+        containerRegistry: '$(registryname)'
+        repository: '$(imagerepo)'
+        tags: |
+          '$(tag)''
