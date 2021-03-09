@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yoga-deploy
+  labels:
+    app: yoga-app
+spec:
+  selector:
+    matchLabels:
+      app: yoga-app
+  template:
+    metadata:
+      labels:
+        app: yoga-app
+    spec:
+      containers:
+      - name: yoga-app
+        image: myacrdemo2021.azurecr.io/app1/yoga:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yoga-service
+  labels:
+    app: yoga-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: yoga-app
+  ports:
+  - port: 80
+    targetPort: 80

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocket-app-deploy
+  labels:
+    app: rocket-app
+spec:
+  selector:
+    matchLabels:
+      app: rocket-app
+  template:
+    metadata:
+      labels:
+        app: rocket-app
+    spec:
+      containers:
+      - name: rocket-app
+        image: myacrdemo2021.azurecr.io/app1/mynginx:v1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+        - name: acrdemo2ss-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rocket-app-service
+  labels:
+    app: rocket-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: rocket-app
+  ports:
+  - port: 80
+    targetPort: 80

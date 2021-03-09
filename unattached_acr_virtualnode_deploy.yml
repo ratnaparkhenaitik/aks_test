@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocket-vs-deploy
+  labels:
+    app: rocket-vs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rocket-vs
+  template:
+    metadata:
+      labels:
+        app: rocket-vs
+    spec:
+      containers:
+      - name: rocket-vs
+        image: myacrdemo2021.azurecr.io/app1/moon:v1
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+        - name: acrdemo2ss-secret
+      nodeSelector:
+           kubernetes.io/role: agent
+           beta.kubernetes.io/os: linux
+           type: virtual-kubelet
+      tolerations:
+        - key: virtual-kubelet.io/provider
+          operator: Exists
+        - key: azure.com/aci
+          effect: NoSchedule
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rocket-vs-service
+  labels:
+    app: rocket-vs
+spec:
+  type: LoadBalancer
+  selector:
+    app: rocket-vs
+  ports:
+  - port: 80
+    targetPort: 80
